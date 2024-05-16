@@ -2,6 +2,7 @@ from serpapi import GoogleSearch
 
 # TODO:
 #   1. Adjust the max_price budget depending on the left amount after flight and divide by the nights
+#   2. Check if we want to deal with the flight back to TLV
 
 
 def adjust_min_budget(total_budget):
