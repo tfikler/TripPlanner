@@ -1,4 +1,4 @@
-from gpt import get_top_destinations, get_airports_for_destinations, get_daily_plan
+from gpt import get_top_destinations, get_airports_for_destinations, get_daily_plan, generate_image_for_the_trip
 from serp_api import get_flights_to_destination, get_hotel_in_destination
 
 
@@ -35,7 +35,10 @@ def main():
         hotels_list.append(expensive_hotel)
         print(f'Most expensive hotel in {destination} is {expensive_hotel["name"]} with a price of {expensive_hotel["price"]}')
     chosen_destination, chosen_hotel = get_user_desired_trip(destinations_list, hotels_list)
-    get_daily_plan(chosen_destination, start_date, end_date, total_budget)
+    daily_plan = get_daily_plan(chosen_destination, start_date, end_date, total_budget)
+    image_url = generate_image_for_the_trip(chosen_destination, start_date, end_date, daily_plan)
+    print(image_url)
+
 
 
 # Press the green button in the gutter to run the script.
