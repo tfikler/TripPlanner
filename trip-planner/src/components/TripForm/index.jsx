@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import styles from './TripForm.module.css';
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 function TripForm() {
   const [startDate, setStartDate] = useState('');
@@ -9,19 +9,12 @@ function TripForm() {
   const [totalBudget, setTotalBudget] = useState('');
   const [tripType, setTripType] = useState('');
   const today = new Date().toISOString().split('T')[0];
-  // const router = useRouter();
+  const router = useRouter();
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   router.push({
-  //     pathname: '/results',
-  //     query: { startDate, endDate, totalBudget, tripType },
-  //   });
-  // };
-    const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(`Start Date: ${startDate}, End Date: ${endDate}, Total Budget: ${totalBudget}, Trip Type: ${tripType}`)
-    }
+  const handleSubmit = (e) => {
+      e.preventDefault();
+      router.push(`/results?startDate=${startDate}&endDate=${endDate}&totalBudget=${totalBudget}&tripType=${tripType}`);
+  }
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
