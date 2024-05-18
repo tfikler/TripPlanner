@@ -1,38 +1,58 @@
-.form {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-  background-color: #f9f9f9;
+.tripFormContainer {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #f4f4f9;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
-.form div {
-  margin-bottom: 1rem;
+.form, .tripSelection, .dailyPlan {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
 }
 
-.form label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+.tripItem {
+  padding: 15px;
+  margin: 5px 0;
+  background: linear-gradient(145deg, #5f5fc4, #2828b6);
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
-.form input, .form select, .form button {
-  width: 100%;
-  padding: 0.75rem;
-  font-size: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.tripItem:hover {
+  transform: scale(1.05);
 }
 
-.form button {
-  background-color: #0070f3;
-  color: #fff;
+.tripItem.selected {
+  border: 2px solid #a2a1ff;
+}
+
+.formInput, .formSelect {
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  background: white;
+}
+
+.formButton, .nextButton {
+  padding: 12px 20px;
+  background-color: #4c49e8;
+  color: white;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
-.form button:hover {
-  background-color: #005bb5;
+.formButton:hover, .nextButton:hover {
+  background-color: #3734c7;
+}
+
+.nextButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
