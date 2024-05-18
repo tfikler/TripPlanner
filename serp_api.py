@@ -4,6 +4,7 @@ from serpapi import GoogleSearch
 #   1. Adjust the max_price budget depending on the left amount after flight and divide by the nights
 #   2. Check if we want to deal with the flight back to TLV
 
+iri_api_key = "0a67b2d50f48210578fee708cbbaf99aaaacb765c59414c86ad6bafbcdd3be9b"
 
 def adjust_min_budget(total_budget):
     min_budget = int(total_budget)
@@ -19,7 +20,7 @@ def adjust_min_budget(total_budget):
 def get_hotel_in_destination(start_date, end_date, destination, total_budget):
     min_budget = adjust_min_budget(int(total_budget))
     params = {
-        "api_key": "030c17e79dab106881442c7f93cdd621b97b907d2eb8501569ecf6a7faf9591a",
+        "api_key": iri_api_key,
         "engine": "google_hotels",
         "q": destination,
         "hl": "en",
@@ -74,7 +75,7 @@ def get_flights_to_destination(outbound_date, return_date, airport_code):
         "outbound_date": outbound_date,
         "return_date": return_date,
         "currency": "USD",
-        "api_key": "030c17e79dab106881442c7f93cdd621b97b907d2eb8501569ecf6a7faf9591a"
+        "api_key": iri_api_key
     }
 
     search = GoogleSearch(params)
