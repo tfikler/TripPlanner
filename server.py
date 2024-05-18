@@ -4,8 +4,25 @@ from serp_api import get_flights_to_destination, get_hotel_in_destination
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Dict, Any
+from fastapi.middleware.cors import CORSMiddleware
+# from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class TripRequest(BaseModel):
@@ -29,24 +46,34 @@ class GenerateImageRequest(BaseModel):
     daily_plan: str
 
 
-@app.post("/get_user_desired_trip2")
-def get_user_desired_trip2(request: TripRequest):
-    destinations_list = get_top_destinations(request.start_date, request.end_date, request.total_budget, request.trip_type)
-    hotels_list = []
-    flights_list = []
-    airports_corresponding_to_destinations = get_airports_for_destinations(destinations_list)
-    print(destinations_list)
-
-    for airport, destination in zip(airports_corresponding_to_destinations, destinations_list):
-        cheapest_flight = get_flights_to_destination(request.start_date, request.end_date, airport)
-        flights_list.append(cheapest_flight)
-        expensive_hotel = get_hotel_in_destination(request.start_date, request.end_date, destination, request.total_budget)
-        hotels_list.append(expensive_hotel)
-
-    print("destinations_list", destinations_list)
-    print("hotels_list", hotels_list)
-
-    trips = [{'destination': dest, 'hotel': hotel['name']} for dest, hotel in zip(destinations_list, hotels_list)]
+@app.post("/get_trips")
+def get_trips(request: TripRequest):
+    # destinations_list = get_top_destinations(request.start_date, request.end_date, request.total_budget, request.trip_type)
+    # hotels_list = []
+    # flights_list = []
+    # airports_corresponding_to_destinations = get_airports_for_destinations(destinations_list)
+    # print(destinations_list)
+    #
+    # for airport, destination in zip(airports_corresponding_to_destinations, destinations_list):
+    #     cheapest_flight = get_flights_to_destination(request.start_date, request.end_date, airport)
+    #     flights_list.append(cheapest_flight)
+    #     expensive_hotel = get_hotel_in_destination(request.start_date, request.end_date, destination, request.total_budget)
+    #     hotels_list.append(expensive_hotel)
+    #
+    # print("destinations_list", destinations_list)
+    # print("hotels_list", hotels_list)
+    #
+    # trips = [{'destination': dest, 'hotel': hotel['name']} for dest, hotel in zip(destinations_list, hotels_list)]
+    trips = [
+        {
+            "destination": "Aspen, Colorado",
+            "hotel": "The St. Regis Aspen Resort"
+        },
+        {
+            "destination": "Whistler, British Columbia",
+            "hotel": "Four Seasons Resort Whistler"
+        }
+    ]
     return trips
 
 
@@ -103,7 +130,7 @@ def main():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, port=8000)
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

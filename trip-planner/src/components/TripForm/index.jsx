@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import styles from './TripForm.module.css';
 import { useRouter } from 'next/navigation';
+import { getTrips, generateImage, getDailyPlan } from '../../api/tripRequests';
 
 function TripForm() {
   const [startDate, setStartDate] = useState('');
@@ -9,11 +10,11 @@ function TripForm() {
   const [totalBudget, setTotalBudget] = useState('');
   const [tripType, setTripType] = useState('');
   const today = new Date().toISOString().split('T')[0];
-  const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
       e.preventDefault();
-      router.push(`/results?startDate=${startDate}&endDate=${endDate}&totalBudget=${totalBudget}&tripType=${tripType}`);
+      const trip = await getTrips(startDate, endDate, totalBudget, tripType);
+
   }
 
   return (
