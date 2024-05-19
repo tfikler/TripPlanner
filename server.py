@@ -83,8 +83,8 @@ def get_trips(request: TripRequest):
 
 @app.post("/daily_plan")
 def daily_plan(request: DailyPlanRequest):
-    daily_plan = get_daily_plan(request.start_date, request.end_date, request.total_budget, request.destination)
-    return daily_plan
+    daily_planning = get_daily_plan(request.start_date, request.end_date, request.total_budget, request.destination)
+    return daily_planning
 
 
 @app.post("/generate_image")

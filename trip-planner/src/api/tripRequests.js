@@ -17,14 +17,14 @@ export const getTrips = async (startDate, endDate, totalBudget, tripType) => {
 
 export const getDailyPlan = async (startDate, endDate, totalBudget, selected_trip) => {
     console.log(selected_trip['destination'])
+    const destination = selected_trip['destination']
     try {
         const response = await axios.post('http://localhost:8000/daily_plan', {
             start_date: startDate,
             end_date: endDate,
             total_budget: totalBudget,
-            destination: selected_trip['destination']
+            destination: destination
         });
-        console.log(response.data)
         return response.data;
     } catch (error) {
         console.error(error);

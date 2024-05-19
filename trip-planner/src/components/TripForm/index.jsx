@@ -123,11 +123,7 @@ function TripForm() {
             {step === 3 && formData.dailyPlan && (
                 <div className={styles.dailyPlan}>
                     <h2>Daily Plan for {formData.selectedTrip.destination}</h2>
-                    <ul>
-                        {formData.dailyPlan.map((activity, index) => (
-                            <li key={index}>{activity.description}</li>
-                        ))}
-                    </ul>
+                    <div>{JSON.stringify(formData.dailyPlan)}</div>
                 </div>
             )}
         </div>
