@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Container, Typography, Box } from '@mui/material';
 import styles from './TripForm.module.css';
-import { getTrips, getDailyPlan } from '../../api/tripRequests';
+import {getTrips, getDailyPlan, generateImage} from '../../api/tripRequests';
 
 function TripForm() {
     const [step, setStep] = useState(1);
@@ -13,6 +13,7 @@ function TripForm() {
         tripType: '',
         selectedTrip: null,
         dailyPlan: [],
+        img: '',
     });
     const [trips, setTrips] = useState([]);
     const today = new Date().toISOString().split('T')[0];
@@ -35,9 +36,11 @@ function TripForm() {
     const handleNext = async () => {
         if (step === 2 && formData.selectedTrip) {
             const response = await getDailyPlan(formData.startDate, formData.endDate, formData.totalBudget, formData.selectedTrip);
+            const img = await generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination);
             const parsedResponse = JSON.parse(response);
             const dailyPlan = parsedResponse.find(trip => trip.destination === formData.selectedTrip.destination).dailyPlan;
             setFormData(prev => ({ ...prev, dailyPlan }));
+            setFormData(prev => ({ ...prev, img }));
             setStep(3); // Move to daily plan view
         }
     };
@@ -186,6 +189,7 @@ function TripForm() {
                     ) : (
                         <Typography>No daily plan available</Typography>
                     )}
+                    <img src={formData.img} alt="Trip" />
                 </Box>
             )}
         </Container>

@@ -31,7 +31,7 @@ export const getDailyPlan = async (startDate, endDate, totalBudget, selected_tri
     }
 }
 
-export const generateImage = async (startDate, endDate, dailyPlan, destination) => {
+export const generateImage = async (destination, startDate, endDate, dailyPlan) => {
     try {
         const response = await axios.post('http://localhost:8000/generate_image', {
             start_date: startDate,

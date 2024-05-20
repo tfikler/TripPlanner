@@ -98,8 +98,8 @@ def daily_plan(request: DailyPlanRequest):
 
 @app.post("/generate_image")
 def generate_image(request: GenerateImageRequest):
-    image_url = generate_image_for_the_trip(request.chosen_destination, request.start_date, request.end_date, request.daily_plan)
-    return {'image_url': image_url}
+    image_url = generate_image_for_the_trip(request.destination, request.start_date, request.end_date, request.daily_plan)
+    return image_url
 
 # def get_user_inputs():
 #     start_date = input("Enter the start date (YYYY-MM-DD): ")
