@@ -64,18 +64,27 @@ def get_trips(request: TripRequest):
     # print("hotels_list", hotels_list)
     #
     # trips = [{'destination': dest, 'hotel': hotel['name']} for dest, hotel in zip(destinations_list, hotels_list)]
+    # print(f'my trips{trips}')
     trips = [
         {
-            "destination": "Aspen, Colorado",
-            "hotel": "The St. Regis Aspen Resort"
+            "destination": "Maldives",
+            "hotel": "The Nautilus Maldives"
         },
         {
-            "destination": "Whistler, British Columbia",
-            "hotel": "Four Seasons Resort Whistler"
+            "destination": "Hawaii",
+            "hotel": "ESPACIO The Jewel of Waikiki"
         },
         {
-            "destination": "Maui, Hawaii",
-            "hotel": "Four Seasons Resort Maui at Wailea"
+            "destination": "Bora Bora",
+            "hotel": "Four Seasons Resort Bora Bora"
+        },
+        {
+            "destination": "Bahamas",
+            "hotel": "Rock House Hotel and Restaurant"
+        },
+        {
+            "destination": "Fiji",
+            "hotel": "Vacala Bay Resort"
         }
     ]
     return trips

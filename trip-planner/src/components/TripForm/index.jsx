@@ -1,9 +1,8 @@
 'use client';
 import { useState } from 'react';
+import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Container, Typography, Box } from '@mui/material';
 import styles from './TripForm.module.css';
-import { useRouter } from 'next/navigation';
-import { getTrips, generateImage, getDailyPlan } from '../../api/tripRequests';
-
+import { getTrips, getDailyPlan } from '../../api/tripRequests';
 
 function TripForm() {
     const [step, setStep] = useState(1);
@@ -13,10 +12,11 @@ function TripForm() {
         totalBudget: '',
         tripType: '',
         selectedTrip: null,
-        dailyPlan: null,
+        dailyPlan: [],
     });
     const [trips, setTrips] = useState([]);
     const today = new Date().toISOString().split('T')[0];
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -34,9 +34,11 @@ function TripForm() {
 
     const handleNext = async () => {
         if (step === 2 && formData.selectedTrip) {
+            const response = await getDailyPlan(formData.startDate, formData.endDate, formData.totalBudget, formData.selectedTrip);
+            const parsedResponse = JSON.parse(response);
+            const dailyPlan = parsedResponse.find(trip => trip.destination === formData.selectedTrip.destination).dailyPlan;
+            setFormData(prev => ({ ...prev, dailyPlan }));
             setStep(3); // Move to daily plan view
-            const dailyPlay = await getDailyPlan(formData.startDate, formData.endDate, formData.totalBudget, formData.selectedTrip).then(plan => setFormData(prev => ({ ...prev, dailyPlan: plan })));
-            console.log(dailyPlay)
         }
     };
 
@@ -44,89 +46,149 @@ function TripForm() {
         setFormData(prev => ({ ...prev, selectedTrip: trip }));
     };
 
+    const DailyPlanItem = ({ date, activities, expenses }) => (
+        <div className={styles.dailyPlanItem}>
+            <Typography variant="h6">{date}</Typography>
+            <ul>
+                {activities.map((activity, index) => (
+                    <li key={index}>{activity}</li>
+                ))}
+            </ul>
+            <Typography>Expenses: ${expenses}</Typography>
+        </div>
+    );
+
     return (
-        <div className={styles.tripFormContainer}>
+        <Container className={styles.tripFormContainer}>
             {step === 1 && (
                 <form onSubmit={handleSubmit} className={styles.form}>
-                    <div>
-                        <label>Start Date:</label>
-                        <input
+                    <Box sx={{width: '100%', textAlign: 'center'}}>
+                    <Typography variant="h4" component="h2" gutterBottom>
+                        Plan Your Trip
+                    </Typography>
+                    </Box>
+                    <div className={styles.formGroup}>
+                        <TextField
+                            label="Start Date"
                             type="date"
                             name="startDate"
                             className={styles.formInput}
                             value={formData.startDate}
                             onChange={handleChange}
                             required
-                            min={today}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            inputProps={{
+                                min: today,
+                            }}
                         />
                     </div>
-                    <div>
-                        <label>End Date:</label>
-                        <input
+                    <div className={styles.formGroup}>
+                        <TextField
+                            label="End Date"
                             type="date"
                             name="endDate"
                             className={styles.formInput}
                             value={formData.endDate}
                             onChange={handleChange}
                             required
-                            min={formData.startDate || today}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            inputProps={{
+                                min: formData.startDate || today,
+                            }}
                         />
                     </div>
-                    <div>
-                        <label>Total Budget:</label>
-                        <input
+                    <div className={styles.formGroup}>
+                        <TextField
+                            label="Total Budget"
                             type="number"
                             name="totalBudget"
                             className={styles.formInput}
                             value={formData.totalBudget}
                             onChange={handleChange}
                             required
-                            min="0"
+                            inputProps={{
+                                min: "0",
+                            }}
                         />
                     </div>
-                    <div>
-                        <label>Trip Type:</label>
-                        <select
-                            name="tripType"
-                            className={styles.formSelect}
-                            value={formData.tripType}
-                            onChange={handleChange}
+                    <div className={styles.formGroup}>
+                        <TextField
+                            id="tripType"
+                            select
                             required
-                        >
-                            <option value="">Select</option>
-                            <option value="ski">Ski</option>
-                            <option value="beach">Beach</option>
-                            <option value="city">City</option>
-                        </select>
+                            label="Trip Type"
+                            defaultValue="Trip Type">
+                            <MenuItem value="Ski">Ski</MenuItem>
+                            <MenuItem value="Beach">Beach</MenuItem>
+                            <MenuItem value="City">City</MenuItem>
+                        </TextField>
+
                     </div>
-                    <button type="submit">Find Trips</button>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        className={styles.submitButton}
+                    >
+                        Find Trips
+                    </Button>
                 </form>
             )}
 
             {step === 2 && (
-                <>
-                <div className={styles.tripSelection}>
-                    {trips.map(trip => (
-                        <div key={trip.id}
-                             className={`${styles.tripItem} ${formData.selectedTrip?.id === trip.id ? styles.selected : ''}`}
-                             onClick={() => handleTripSelect(trip)}>
-                            <p>{trip.destination}</p>
-                            <p>${trip.price}</p>
-                        </div>
-                    ))}
-                </div>
-                <button onClick={handleNext} className={styles.nextButton} disabled={!formData.selectedTrip}>Next</button>
-                </>
-                )}
-
+                <Box className={styles.tripSelection}>
+                    <Typography variant="h4">Select a Trip</Typography>
+                        <Box className={styles.tripItems}>
+                        {trips.map(trip => (
+                            <Box
+                                key={trip.destination}
+                                className={`${styles.tripItem} ${formData.selectedTrip?.destination === trip.destination ? styles.selected : ''}`}
+                                onClick={() => handleTripSelect(trip)}
+                            >
+                                <Typography variant="h6">{trip.destination}</Typography>
+                                <Typography>{trip.hotel}</Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                    <Button
+                        onClick={handleNext}
+                        variant="contained"
+                        color="primary"
+                        className={styles.nextButton}
+                        disabled={!formData.selectedTrip}
+                    >
+                        Next
+                    </Button>
+                </Box>
+            )}
 
             {step === 3 && formData.dailyPlan && (
-                <div className={styles.dailyPlan}>
-                    <h2>Daily Plan for {formData.selectedTrip.destination}</h2>
-                    <div>{JSON.stringify(formData.dailyPlan)}</div>
-                </div>
+                <Box className={styles.dailyPlan}>
+                    <Box sx={{width: '100%', textAlign: 'center'}}>
+                    <Typography variant="h4">Daily Plan for {formData.selectedTrip.destination}</Typography>
+                    </Box>
+                        {formData.dailyPlan.length > 0 ? (
+                        formData.dailyPlan.map((plan, index) => (
+                            <Box key={index} className={styles.dailyPlanItem}>
+                                <Typography variant="h6">{plan.date}</Typography>
+                                <ul>
+                                    {plan.activities.map((activity, idx) => (
+                                        <li key={idx}>{activity}</li>
+                                    ))}
+                                </ul>
+                                <Typography>Expenses: ${plan.expenses}</Typography>
+                            </Box>
+                        ))
+                    ) : (
+                        <Typography>No daily plan available</Typography>
+                    )}
+                </Box>
             )}
-        </div>
+        </Container>
     );
 }
 
