@@ -19,21 +19,8 @@ function TripForm() {
     });
     const [trips, setTrips] = useState([]);
     const today = new Date().toISOString().split('T')[0];
+    const [images, setImages] = useState([]);
 
-    const images = [
-        {
-          original: "https://picsum.photos/id/1018/1000/600/",
-          thumbnail: "https://picsum.photos/id/1018/250/150/",
-        },
-        {
-          original: "https://picsum.photos/id/1015/1000/600/",
-          thumbnail: "https://picsum.photos/id/1015/250/150/",
-        },
-        {
-          original: "https://picsum.photos/id/1019/1000/600/",
-          thumbnail: "https://picsum.photos/id/1019/250/150/",
-        },
-      ];
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -55,11 +42,35 @@ function TripForm() {
     const handleNext = async () => {
         if (step === 2 && formData.selectedTrip) {
             const response = await getDailyPlan(formData.startDate, formData.endDate, formData.totalBudget, formData.selectedTrip);
-            const img = await generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination);
+            console.log((JSON.parse(response)));
+            const first_img = await generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination);
+            const second_img = await generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination);
+            const third_img = await generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination);
+            const fourth_img = await generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination);
+            const imgs = [
+                {
+                    original: first_img,
+                    thumbnail: first_img,
+                },
+                {
+                    original: second_img,
+                    thumbnail: second_img,
+                },
+                {
+                    original: third_img,
+                    thumbnail: third_img,
+                },
+                {
+                    original: fourth_img,
+                    thumbnail: fourth_img,
+                },
+            ];
+            setImages(imgs);
             const parsedResponse = JSON.parse(response);
-            const dailyPlan = parsedResponse.find(trip => trip.destination === formData.selectedTrip.destination).dailyPlan;
+            // const dailyPlan = parsedResponse.find(trip => trip.destination === formData.selectedTrip.destination).dailyPlan;
+            const dailyPlan = parsedResponse[0].dailyPlan;
             setFormData(prev => ({ ...prev, dailyPlan }));
-            setFormData(prev => ({ ...prev, img }));
+            setFormData(prev => ({ ...prev, imgs }));
             setStep(3); // Move to daily plan view
         }
     };
