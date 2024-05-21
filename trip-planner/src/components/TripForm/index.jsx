@@ -153,7 +153,8 @@ function TripForm() {
                                 onClick={() => handleTripSelect(trip)}
                             >
                                 <Typography variant="h6">{trip.destination}</Typography>
-                                <Typography>{trip.hotel}</Typography>
+                                <Typography>You'll stay at {trip.hotel}</Typography>
+                                <Typography>Flight will cost {trip.flight_price}$</Typography>
                             </Box>
                         ))}
                     </Box>

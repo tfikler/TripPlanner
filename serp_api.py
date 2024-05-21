@@ -4,7 +4,7 @@ from serpapi import GoogleSearch
 #   1. Adjust the max_price budget depending on the left amount after flight and divide by the nights
 #   2. Check if we want to deal with the flight back to TLV
 
-iri_api_key = "0a67b2d50f48210578fee708cbbaf99aaaacb765c59414c86ad6bafbcdd3be9b"
+iri_api_key = "f4173a9c84a401366b706d95b33b4e1633cf3ecff0e24fd9db964897763a15f0"
 
 def adjust_min_budget(total_budget):
     min_budget = 0
@@ -36,16 +36,16 @@ def get_hotel_in_destination(start_date, end_date, destination, budget_post_flig
 
     search1 = GoogleSearch(params)
     response = search1.get_json()
-    next_page_token = response.get('serpapi_pagination', None)
-    if next_page_token:
-        params['next_page_token'] = next_page_token['next_page_token']
+    next_page_token1 = response.get('serpapi_pagination', None)
+    if next_page_token1:
+        params['next_page_token'] = next_page_token1['next_page_token']
         print(f'Next page token: {params["next_page_token"]} second page search')
 
     search = GoogleSearch(params)
     response = search.get_json()
-    next_page_token = response.get('serpapi_pagination', None)
-    if next_page_token:
-        params['next_page_token'] = next_page_token['next_page_token']
+    next_page_token2 = response.get('serpapi_pagination', None)
+    if next_page_token2:
+        params['next_page_token'] = next_page_token2['next_page_token']
         print(f'Next page token: {params["next_page_token"]} third page search')
         search = GoogleSearch(params)
         response = search.get_json()
@@ -84,7 +84,7 @@ def departure_flights(outbound_date, return_date, airport_code):
         best_flights = response.get('best_flights', [])
         if best_flights:
             cheapest_flight = min(best_flights, key=lambda x: x['price'])
-            print(cheapest_flight)
+            # print(cheapest_flight)
             return {
                 'price': cheapest_flight['price'],
                 'airline': cheapest_flight['flights'][0]['airline'],
@@ -97,7 +97,8 @@ def departure_flights(outbound_date, return_date, airport_code):
             }
     except KeyError:
         return None
-    
+
+
 def return_flights(outbound_date, return_date, airport_code, departure_token):
     params = {
         "engine": "google_flights",
@@ -114,18 +115,8 @@ def return_flights(outbound_date, return_date, airport_code, departure_token):
 
     search = GoogleSearch(params)
     response = search.get_json()
-    print(f'returnflight{response}')
-    # try:
-    #     best_flights = response.get('best_flights', [])
-    #     if best_flights:
-    #         cheapest_flight = min(best_flights, key=lambda x: x['price'])
-    #         return {
-    #             'price': cheapest_flight['price'],
-    #             'airline': cheapest_flight['flights'][0]['airline'],
-    #             'departure_time': cheapest_flight['flights'][0]['departure_airport']['time'],
-    #             'arrival_time': cheapest_flight['flights'][-1]['arrival_airport']['time'],
-    #             'total_duration': cheapest_flight['total_duration'],
-    #             'layovers': [layover['name'] for layover in cheapest_flight['layovers']]
-    #         }
-    # except KeyError:
-    #     return None
+    print(f'return flights response: {response} end here')
+    try:
+        return response['other_flights'][0]['flights'][0]['departure_airport']['name']
+    except KeyError:
+        return None

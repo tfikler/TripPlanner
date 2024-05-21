@@ -51,40 +51,50 @@ def get_trips(request: TripRequest):
     # destinations_list = get_top_destinations(request.start_date, request.end_date, request.total_budget, request.trip_type)
     # hotels_list = []
     # flights_list = []
+    # return_flights_list = []
     # airports_corresponding_to_destinations = get_airports_for_destinations(destinations_list)
     # print(destinations_list)
     #
     # for airport, destination in zip(airports_corresponding_to_destinations, destinations_list):
-    #     cheapest_flight = get_flights_to_destination(request.start_date, request.end_date, airport)
+    #     cheapest_flight = departure_flights(request.start_date, request.end_date, airport)
     #     flights_list.append(cheapest_flight)
-    #     expensive_hotel = get_hotel_in_destination(request.start_date, request.end_date, destination, request.total_budget)
+    #     # cheapest_return_flight = return_flights(request.start_date, request.end_date, airport, cheapest_flight["departure_token"])
+    #     # print('cheapest_return_flight', cheapest_return_flight)
+    #     # return_flights_list.append(cheapest_return_flight['departure_airport'])
+    #     budget_post_flight = int(request.total_budget) - cheapest_flight['price']
+    #     expensive_hotel = get_hotel_in_destination(request.start_date, request.end_date, destination, budget_post_flight)
     #     hotels_list.append(expensive_hotel)
     #
-    # print("destinations_list", destinations_list)
-    # print("hotels_list", hotels_list)
+    # # print("destinations_list", destinations_list)
+    # # print("hotels_list", hotels_list)
     #
-    # trips = [{'destination': dest, 'hotel': hotel['name']} for dest, hotel in zip(destinations_list, hotels_list)]
+    # trips = [{'destination': dest, 'hotel': hotel['name'], 'flight_price': flight['price']} for dest, hotel, flight in zip(destinations_list, hotels_list, flights_list)]
     # print(f'my trips{trips}')
     trips = [
         {
             "destination": "Maldives",
-            "hotel": "The Nautilus Maldives"
+            "hotel": "The Nautilus Maldives",
+            "flight_price": 1000
         },
         {
             "destination": "Hawaii",
-            "hotel": "ESPACIO The Jewel of Waikiki"
+            "hotel": "ESPACIO The Jewel of Waikiki",
+              "flight_price": 2000
         },
         {
             "destination": "Bora Bora",
-            "hotel": "Four Seasons Resort Bora Bora"
+            "hotel": "Four Seasons Resort Bora Bora",
+              "flight_price": 3000
         },
         {
             "destination": "Bahamas",
-            "hotel": "Rock House Hotel and Restaurant"
+            "hotel": "Rock House Hotel and Restaurant",
+              "flight_price": 4000
         },
         {
             "destination": "Fiji",
-            "hotel": "Vacala Bay Resort"
+            "hotel": "Vacala Bay Resort",
+              "flight_price": 5000
         }
     ]
     return trips
