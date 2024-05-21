@@ -4,7 +4,7 @@ from serpapi import GoogleSearch
 #   1. Adjust the max_price budget depending on the left amount after flight and divide by the nights
 #   2. Check if we want to deal with the flight back to TLV
 
-iri_api_key = "f4173a9c84a401366b706d95b33b4e1633cf3ecff0e24fd9db964897763a15f0"
+iri_api_key = "6f65010aaf06a3011f862d0c37dc8f1d8632ac19fc22c6b54981a859d0fa75c9"
 
 def adjust_min_budget(total_budget):
     min_budget = 0
@@ -36,20 +36,21 @@ def get_hotel_in_destination(start_date, end_date, destination, budget_post_flig
 
     search1 = GoogleSearch(params)
     response = search1.get_json()
-    next_page_token1 = response.get('serpapi_pagination', None)
-    if next_page_token1:
-        params['next_page_token'] = next_page_token1['next_page_token']
-        print(f'Next page token: {params["next_page_token"]} second page search')
+    # next_page_token1 = response.get('serpapi_pagination', None)
+    # if next_page_token1:
+    #     params['next_page_token'] = next_page_token1['next_page_token']
+    #     print(f'Next page token: {params["next_page_token"]} second page search')
+    #
+    # search = GoogleSearch(params)
+    # response = search.get_json()
+    # next_page_token2 = response.get('serpapi_pagination', None)
+    # if next_page_token2:
+    #     params['next_page_token'] = next_page_token2['next_page_token']
+    #     print(f'Next page token: {params["next_page_token"]} third page search')
+    #     search = GoogleSearch(params)
+    #     response = search.get_json()
 
-    search = GoogleSearch(params)
-    response = search.get_json()
-    next_page_token2 = response.get('serpapi_pagination', None)
-    if next_page_token2:
-        params['next_page_token'] = next_page_token2['next_page_token']
-        print(f'Next page token: {params["next_page_token"]} third page search')
-        search = GoogleSearch(params)
-        response = search.get_json()
-
+    print(f'hotel response: {response} on destination {destination}')
     try:
         properties = response.get('properties', [])
         if properties:
@@ -57,15 +58,14 @@ def get_hotel_in_destination(start_date, end_date, destination, budget_post_flig
             return {
                 'name': most_expensive_hotel['name'],
                 'price': most_expensive_hotel['total_rate']['lowest'],
-                'rating': most_expensive_hotel.get('overall_rating', 'N/A'),
-                'address': most_expensive_hotel.get('gps_coordinates', 'N/A'),
-                'link': most_expensive_hotel.get('link', 'N/A')
             }
-    except KeyError:
+    except Exception as e:
+        print(f'Error in get_hotel_in_destination: {e}')
         return None
 
 
 def departure_flights(outbound_date, return_date, airport_code):
+    print(airport_code)
     params = {
         "engine": "google_flights",
         "hl": "en",
@@ -80,22 +80,23 @@ def departure_flights(outbound_date, return_date, airport_code):
 
     search = GoogleSearch(params)
     response = search.get_json()
+    print(f'departure flights response: {response} in code {airport_code}')
     try:
         best_flights = response.get('best_flights', [])
         if best_flights:
             cheapest_flight = min(best_flights, key=lambda x: x['price'])
-            # print(cheapest_flight)
+            print(f'cheapest_flight according to airport code: {airport_code} is {cheapest_flight}')
             return {
                 'price': cheapest_flight['price'],
-                'airline': cheapest_flight['flights'][0]['airline'],
-                'departure_time': cheapest_flight['flights'][0]['departure_airport']['time'],
-                'arrival_time': cheapest_flight['flights'][-1]['arrival_airport']['time'],
-                'total_duration': cheapest_flight['total_duration'],
-                'layovers': [layover['name'] for layover in cheapest_flight['layovers']],
-                'departure_token': cheapest_flight['departure_token']
-                
             }
-    except KeyError:
+        else:
+            print(f'best_flights is empty, trying other_flights')
+            best_flight = response['other_flights'][0]['price']
+            return {
+                'price': best_flight,
+            }
+    except Exception as e:
+        print(f'Error in departure_flights: {e}')
         return None
 
 

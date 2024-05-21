@@ -172,7 +172,7 @@ function TripForm() {
                 </form>
             )}
 
-            {step === 2 && (
+            {step === 2 && trips.length > 0 && (
                 <Box className={styles.tripSelection}>
                     <Typography variant="h4">Select a Trip</Typography>
                         <Box className={styles.tripItems}>
@@ -199,6 +199,12 @@ function TripForm() {
                     </Button>
                 </Box>
             )}
+            {step === 2 && trips.length === 0 && (
+                <Box className={styles.tripItem}>
+                <Typography>No 5 trips available for the selected criteria</Typography>
+                <Typography>Try reset the search for different values</Typography>
+                </Box>
+                    )}
 
             {step === 3 && formData.dailyPlan && (
                 <Box className={styles.dailyPlan}>
