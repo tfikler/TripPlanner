@@ -7,7 +7,7 @@ from serpapi import GoogleSearch
 iri_api_key = "0a67b2d50f48210578fee708cbbaf99aaaacb765c59414c86ad6bafbcdd3be9b"
 
 def adjust_min_budget(total_budget):
-    min_budget = int(total_budget)
+    min_budget = 0
     if 5000 < total_budget < 10000:
         min_budget = total_budget // 10
     if total_budget < 5000:
