@@ -7,6 +7,7 @@ import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 function TripForm() {
     const [step, setStep] = useState(1);
+    const [showGallery, setShowGallery] = useState(false);
     const [formData, setFormData] = useState({
         startDate: '',
         endDate: '',
@@ -36,6 +37,10 @@ function TripForm() {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleToggleGallery = () => {
+        setShowGallery(prevShowGallery => !prevShowGallery);
     };
 
     const handleSubmit = async (e) => {
@@ -77,7 +82,6 @@ function TripForm() {
 
     return (
         <Container className={styles.tripFormContainer}>
-            <ImageGallery items={images} />
             {step === 1 && (
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <Box sx={{width: '100%', textAlign: 'center'}}>
@@ -189,6 +193,14 @@ function TripForm() {
                 <Box className={styles.dailyPlan}>
                     <Box sx={{width: '100%', textAlign: 'center'}}>
                     <Typography variant="h4">Daily Plan for {formData.selectedTrip.destination}</Typography>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleToggleGallery}
+                            sx={{ position: 'absolute', top: 0, right: 0 }}
+                        >
+                            {showGallery ? 'Hide Gallery' : 'Show Gallery'}
+                        </Button>
                     </Box>
                         {formData.dailyPlan.length > 0 ? (
                         formData.dailyPlan.map((plan, index) => (
@@ -205,7 +217,11 @@ function TripForm() {
                     ) : (
                         <Typography>No daily plan available</Typography>
                     )}
-                    <img src={formData.img} alt="Trip" />
+                    {showGallery && (
+                        <Box className={styles.galleryOverlay}>
+                            <ImageGallery items={images} />
+                        </Box>
+                    )}
                 </Box>
             )}
         </Container>
