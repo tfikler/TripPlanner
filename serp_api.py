@@ -17,8 +17,8 @@ def adjust_min_budget(total_budget):
     return min_budget
 
 
-def get_hotel_in_destination(start_date, end_date, destination, total_budget):
-    min_budget = adjust_min_budget(int(total_budget))
+def get_hotel_in_destination(start_date, end_date, destination, budget_post_flight):
+    min_budget = adjust_min_budget(int(budget_post_flight))
     params = {
         "api_key": iri_api_key,
         "engine": "google_hotels",
@@ -29,7 +29,7 @@ def get_hotel_in_destination(start_date, end_date, destination, total_budget):
         "check_out_date": end_date,
         "currency": "USD",
         "sort_by": "3",
-        "max_price": total_budget,
+        "max_price": budget_post_flight,
         "min_price": min_budget,
         "next_page_token": ""
     }
@@ -65,7 +65,7 @@ def get_hotel_in_destination(start_date, end_date, destination, total_budget):
         return None
 
 
-def get_flights_to_destination(outbound_date, return_date, airport_code):
+def departure_flights(outbound_date, return_date, airport_code):
     params = {
         "engine": "google_flights",
         "hl": "en",
@@ -84,13 +84,48 @@ def get_flights_to_destination(outbound_date, return_date, airport_code):
         best_flights = response.get('best_flights', [])
         if best_flights:
             cheapest_flight = min(best_flights, key=lambda x: x['price'])
+            print(cheapest_flight)
             return {
                 'price': cheapest_flight['price'],
                 'airline': cheapest_flight['flights'][0]['airline'],
                 'departure_time': cheapest_flight['flights'][0]['departure_airport']['time'],
                 'arrival_time': cheapest_flight['flights'][-1]['arrival_airport']['time'],
                 'total_duration': cheapest_flight['total_duration'],
-                'layovers': [layover['name'] for layover in cheapest_flight['layovers']]
+                'layovers': [layover['name'] for layover in cheapest_flight['layovers']],
+                'departure_token': cheapest_flight['departure_token']
+                
             }
     except KeyError:
         return None
+    
+def return_flights(outbound_date, return_date, airport_code, departure_token):
+    params = {
+        "engine": "google_flights",
+        "hl": "en",
+        "gl": "us",
+        "departure_id": "TLV",
+        "arrival_id": airport_code,
+        "outbound_date": outbound_date,
+        "return_date": return_date,
+        "currency": "USD",
+        "api_key": "f4173a9c84a401366b706d95b33b4e1633cf3ecff0e24fd9db964897763a15f0",
+        "departure_token": departure_token
+    }
+
+    search = GoogleSearch(params)
+    response = search.get_json()
+    print(f'returnflight{response}')
+    # try:
+    #     best_flights = response.get('best_flights', [])
+    #     if best_flights:
+    #         cheapest_flight = min(best_flights, key=lambda x: x['price'])
+    #         return {
+    #             'price': cheapest_flight['price'],
+    #             'airline': cheapest_flight['flights'][0]['airline'],
+    #             'departure_time': cheapest_flight['flights'][0]['departure_airport']['time'],
+    #             'arrival_time': cheapest_flight['flights'][-1]['arrival_airport']['time'],
+    #             'total_duration': cheapest_flight['total_duration'],
+    #             'layovers': [layover['name'] for layover in cheapest_flight['layovers']]
+    #         }
+    # except KeyError:
+    #     return None
