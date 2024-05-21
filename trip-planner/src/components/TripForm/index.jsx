@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Container, Typography, Box } from '@mui/material';
 import styles from './TripForm.module.css';
 import {getTrips, getDailyPlan, generateImage} from '../../api/tripRequests';
-
+import ImageGallery from "react-image-gallery";
+import "react-image-gallery/styles/css/image-gallery.css";
 function TripForm() {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
@@ -18,7 +19,20 @@ function TripForm() {
     const [trips, setTrips] = useState([]);
     const today = new Date().toISOString().split('T')[0];
 
-
+    const images = [
+        {
+          original: "https://picsum.photos/id/1018/1000/600/",
+          thumbnail: "https://picsum.photos/id/1018/250/150/",
+        },
+        {
+          original: "https://picsum.photos/id/1015/1000/600/",
+          thumbnail: "https://picsum.photos/id/1015/250/150/",
+        },
+        {
+          original: "https://picsum.photos/id/1019/1000/600/",
+          thumbnail: "https://picsum.photos/id/1019/250/150/",
+        },
+      ];
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -63,6 +77,7 @@ function TripForm() {
 
     return (
         <Container className={styles.tripFormContainer}>
+            <ImageGallery items={images} />
             {step === 1 && (
                 <form onSubmit={handleSubmit} className={styles.form}>
                     <Box sx={{width: '100%', textAlign: 'center'}}>
