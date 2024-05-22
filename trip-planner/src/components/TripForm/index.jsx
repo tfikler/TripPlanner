@@ -43,26 +43,28 @@ function TripForm() {
         if (step === 2 && formData.selectedTrip) {
             const response = await getDailyPlan(formData.startDate, formData.endDate, formData.totalBudget, formData.selectedTrip);
             console.log((JSON.parse(response)));
-            const first_img = await generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination);
-            const second_img = await generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination);
-            const third_img = await generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination);
-            const fourth_img = await generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination);
+            const promiseImages = await Promise.all([
+                generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination),
+                generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination),
+                generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination),
+                generateImage(formData.startDate, formData.endDate, response, formData.selectedTrip.destination),
+            ])
             const imgs = [
                 {
-                    original: first_img,
-                    thumbnail: first_img,
+                    original: promiseImages[0],
+                    thumbnail: promiseImages[0]
                 },
                 {
-                    original: second_img,
-                    thumbnail: second_img,
+                    original: promiseImages[1],
+                    thumbnail: promiseImages[1],
                 },
                 {
-                    original: third_img,
-                    thumbnail: third_img,
+                    original: promiseImages[2],
+                    thumbnail: promiseImages[2],
                 },
                 {
-                    original: fourth_img,
-                    thumbnail: fourth_img,
+                    original: promiseImages[3],
+                    thumbnail: promiseImages[3],
                 },
             ];
             setImages(imgs);
