@@ -93,12 +93,15 @@ def get_daily_plan(destination, start_date, end_date, total_budget):
         ]
     }
     prompt = (f"Build a daily plan for a trip to {destination} from {start_date} to {end_date} with a total budget of {total_budget}"
-              f"give it as an array of object like this {daily_plan_object} so i can use it later in my react app")
+              f"give it as object like this {daily_plan_object} so i can use it later in my react app - response only with the daily plan object."
+              f"Make it valid so i can do JSON.parse on it.")
+    print(prompt)
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4-turbo-2024-04-09",
         messages=[
             {"role": "system", "content": prompt}
-        ]
+        ],
+        response_format={"type": "json_object"}
     )
     daily_plan = response.choices[0].message.content
     print(daily_plan)

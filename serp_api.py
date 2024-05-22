@@ -4,7 +4,8 @@ from serpapi import GoogleSearch
 #   1. Adjust the max_price budget depending on the left amount after flight and divide by the nights
 #   2. Check if we want to deal with the flight back to TLV
 
-iri_api_key = "6f65010aaf06a3011f862d0c37dc8f1d8632ac19fc22c6b54981a859d0fa75c9"
+iri_api_key = "1aeb504c0722258830558b728cfc219e512ada40332ce721d2c5e134422f2da6"
+old_iri = "6f65010aaf06a3011f862d0c37dc8f1d8632ac19fc22c6b54981a859d0fa75c9"
 
 def adjust_min_budget(total_budget):
     min_budget = 0

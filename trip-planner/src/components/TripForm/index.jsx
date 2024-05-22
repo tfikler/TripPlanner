@@ -70,7 +70,7 @@ function TripForm() {
             setImages(imgs);
             const parsedResponse = JSON.parse(response);
             // const dailyPlan = parsedResponse.find(trip => trip.destination === formData.selectedTrip.destination).dailyPlan;
-            const dailyPlan = parsedResponse[0].dailyPlan;
+            const dailyPlan = parsedResponse.dailyPlan;
             setFormData(prev => ({ ...prev, dailyPlan }));
             setFormData(prev => ({ ...prev, imgs }));
             setStep(3); // Move to daily plan view
