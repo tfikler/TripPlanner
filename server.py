@@ -37,6 +37,10 @@ class DailyPlanRequest(BaseModel):
     start_date: str
     end_date: str
     total_budget: str
+    airline: str
+    departure_time: str
+    flight_price: float
+    hotel_price: float
 
 
 class GenerateImageRequest(BaseModel):
@@ -48,65 +52,81 @@ class GenerateImageRequest(BaseModel):
 
 @app.post("/get_trips")
 def get_trips(request: TripRequest):
-    # destinations_list = get_top_destinations(request.start_date, request.end_date, request.total_budget, request.trip_type)
-    # hotels_list = []
-    # flights_list = []
-    # return_flights_list = []
-    # airports_corresponding_to_destinations = get_airports_for_destinations(destinations_list)
-    # print(destinations_list)
+    destinations_list = get_top_destinations(request.start_date, request.end_date, request.total_budget, request.trip_type)
+    hotels_list = []
+    flights_list = []
+    return_flights_list = []
+    airports_corresponding_to_destinations = get_airports_for_destinations(destinations_list)
+    print(destinations_list)
+
+    for airport, destination in zip(airports_corresponding_to_destinations, destinations_list):
+        cheapest_flight = departure_flights(request.start_date, request.end_date, airport)
+        print('cheapest_flight', cheapest_flight)
+        flights_list.append(cheapest_flight)
+        if cheapest_flight is None:
+            break
+        budget_post_flight = int(request.total_budget) - cheapest_flight['price']
+        print('budget_post_flight', budget_post_flight)
+        expensive_hotel = get_hotel_in_destination(request.start_date, request.end_date, destination, budget_post_flight)
+        print('expensive_hotel', expensive_hotel)
+        hotels_list.append(expensive_hotel)
+
+    print("destinations_list", destinations_list)
+    print("hotels_list", hotels_list)
+    if None in hotels_list or None in flights_list:
+        trips = []
+    else:
+        trips = [{'destination': dest, 'hotel': hotel['name'], 'flight_price': flight['price'], 'airline': flight['airline'], 'departure_time': flight['departure_time'], 'hotel_price': hotel['price']} for dest, hotel, flight in zip(destinations_list, hotels_list, flights_list)]
+    # trips = [
+    #     {
+    #         "destination": "Maldives",
+    #         "hotel": "The Nautilus Maldives",
+    #         "flight_price": 1000,
+    #         "airline": "El Al",
+    #         "departure_time": "2024-12-27 08:00",
+    #         "hotel_price": "1000$"
     #
-    # for airport, destination in zip(airports_corresponding_to_destinations, destinations_list):
-    #     cheapest_flight = departure_flights(request.start_date, request.end_date, airport)
-    #     print('cheapest_flight', cheapest_flight)
-    #     flights_list.append(cheapest_flight)
-    #     if cheapest_flight is None:
-    #         break
-    #     budget_post_flight = int(request.total_budget) - cheapest_flight['price']
-    #     print('budget_post_flight', budget_post_flight)
-    #     expensive_hotel = get_hotel_in_destination(request.start_date, request.end_date, destination, budget_post_flight)
-    #     print('expensive_hotel', expensive_hotel)
-    #     hotels_list.append(expensive_hotel)
-    #
-    # print("destinations_list", destinations_list)
-    # print("hotels_list", hotels_list)
-    # if None in hotels_list or None in flights_list:
-    #     trips = []
-    # else:
-    #     trips = [{'destination': dest, 'hotel': hotel['name'], 'flight_price': flight['price']} for dest, hotel, flight in zip(destinations_list, hotels_list, flights_list)]
-    trips = [
-        {
-            "destination": "Maldives",
-            "hotel": "The Nautilus Maldives",
-            "flight_price": 1000
-        },
-        {
-            "destination": "Hawaii",
-            "hotel": "ESPACIO The Jewel of Waikiki",
-              "flight_price": 2000
-        },
-        {
-            "destination": "Bora Bora",
-            "hotel": "Four Seasons Resort Bora Bora",
-              "flight_price": 3000
-        },
-        {
-            "destination": "Bahamas",
-            "hotel": "Rock House Hotel and Restaurant",
-              "flight_price": 4000
-        },
-        {
-            "destination": "Fiji",
-            "hotel": "Vacala Bay Resort",
-              "flight_price": 5000
-        }
-    ]
+    #     },
+    #     {
+    #         "destination": "Hawaii",
+    #         "hotel": "ESPACIO The Jewel of Waikiki",
+    #         "flight_price": 2000,
+    #         "airline": "El Al",
+    #         "departure_time": "2024-12-27 08:00",
+    #         "hotel_price": "1000$"
+    #     },
+    #     {
+    #         "destination": "Bora Bora",
+    #         "hotel": "Four Seasons Resort Bora Bora",
+    #         "flight_price": 3000,
+    #         "airline": "El Al",
+    #         "departure_time": "2024-12-27 08:00",
+    #         "hotel_price": "1000"
+    #     },
+    #     {
+    #         "destination": "Bahamas",
+    #         "hotel": "Rock House Hotel and Restaurant",
+    #         "flight_price": 4000,
+    #         "airline": "El Al",
+    #         "departure_time": "2024-12-27 08:00",
+    #         "hotel_price": "1000"
+    #     },
+    #     {
+    #         "destination": "Fiji",
+    #         "hotel": "Vacala Bay Resort",
+    #         "flight_price": 5000,
+    #         "airline": "El Al",
+    #         "departure_time": "2024-12-27 08:00",
+    #         "hotel_price": "1000"
+    #     }
+    # ]
     print(f'trips before return: {trips}')
     return trips
 
 
 @app.post("/daily_plan")
 def daily_plan(request: DailyPlanRequest):
-    daily_planning = get_daily_plan(request.start_date, request.end_date, request.total_budget, request.destination)
+    daily_planning = get_daily_plan(request.start_date, request.end_date, request.total_budget, request.destination, request.airline, request.departure_time, request.flight_price, request.hotel_price)
     return daily_planning
 
 

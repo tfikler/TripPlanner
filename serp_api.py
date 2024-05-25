@@ -89,12 +89,16 @@ def departure_flights(outbound_date, return_date, airport_code):
             print(f'cheapest_flight according to airport code: {airport_code} is {cheapest_flight}')
             return {
                 'price': cheapest_flight['price'],
+                'airline': cheapest_flight['flights'][0]['airline'] if cheapest_flight['flights'][0]['airline'] else None,
+                'departure_time': cheapest_flight['flights'][0]['departure_airport']['time'] if cheapest_flight['flights'][0]['departure_airport']['time'] else None,
             }
         else:
             print(f'best_flights is empty, trying other_flights')
-            best_flight = response['other_flights'][0]['price']
+            best_flight = response['other_flights'][0]
             return {
-                'price': best_flight,
+                'price': best_flight['price'],
+                'departure_time': best_flight['departure_airport']['time'],
+                'airline': best_flight['airline']
             }
     except Exception as e:
         print(f'Error in departure_flights: {e}')

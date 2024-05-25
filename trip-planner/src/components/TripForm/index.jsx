@@ -16,6 +16,7 @@ function TripForm() {
         selectedTrip: null,
         dailyPlan: [],
         img: '',
+        totalExpenses: 0,
     });
     const [trips, setTrips] = useState([]);
     const today = new Date().toISOString().split('T')[0];
@@ -71,8 +72,15 @@ function TripForm() {
             const parsedResponse = JSON.parse(response);
             // const dailyPlan = parsedResponse.find(trip => trip.destination === formData.selectedTrip.destination).dailyPlan;
             const dailyPlan = parsedResponse.dailyPlan;
+            const { flight_price, hotel_price } = parsedResponse;
+            // Sum up the expenses for each day
+            const totalDailyExpenses = dailyPlan.reduce((total, day) => total + day.expenses, 0);
+
+            // Calculate the total cost
+            const totalCost = flight_price + hotel_price + totalDailyExpenses;
             setFormData(prev => ({ ...prev, dailyPlan }));
             setFormData(prev => ({ ...prev, imgs }));
+            setFormData(prev => ({ ...prev, totalExpenses: totalCost }));
             setStep(3); // Move to daily plan view
         }
     };
@@ -186,6 +194,7 @@ function TripForm() {
                             >
                                 <Typography variant="h6">{trip.destination}</Typography>
                                 <Typography>You'll stay at {trip.hotel}</Typography>
+                                <Typography>Flight will depart at: {trip.departure_time}</Typography>
                                 <Typography>Flight will cost {trip.flight_price}$</Typography>
                             </Box>
                         ))}
@@ -212,6 +221,7 @@ function TripForm() {
                 <Box className={styles.dailyPlan}>
                     <Box sx={{width: '100%', textAlign: 'center'}}>
                     <Typography variant="h4">Daily Plan for {formData.selectedTrip.destination}</Typography>
+                    <Typography variant="h6">Total Expenses: ${formData.totalExpenses}</Typography>
                         <Button
                             variant="contained"
                             color="primary"

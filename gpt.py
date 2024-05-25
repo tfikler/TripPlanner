@@ -35,9 +35,11 @@ def get_airports_for_destinations(destinations_list):
     return airports
 
 
-def get_daily_plan(destination, start_date, end_date, total_budget):
+def get_daily_plan(destination, start_date, end_date, total_budget, airline, departure_time, flight_price, hotel_price):
     daily_plan_object = {
         "destination": "Whistler, British Columbia",
+        "flight_price": 500,
+        "hotel_price": 500,
         "budget": 1234,
         "dates": {
             "start": "2024-05-19",
@@ -47,6 +49,7 @@ def get_daily_plan(destination, start_date, end_date, total_budget):
             {
                 "date": "2024-05-19",
                 "activities": [
+                    "Depart from home city using the flight details provided at time provided",
                     "Arrive in Whistler",
                     "Check into accommodation",
                     "Explore Whistler Village"
@@ -92,7 +95,8 @@ def get_daily_plan(destination, start_date, end_date, total_budget):
             }
         ]
     }
-    prompt = (f"Build a daily plan for a trip to {destination} from {start_date} to {end_date} with a total budget of {total_budget}"
+    print(total_budget, destination, airline, departure_time, start_date, end_date)
+    prompt = (f"Build a daily plan for a trip to {total_budget} from {destination} using flight {airline} on {departure_time} until {start_date} with a total budget of {end_date} with flight price of {flight_price} and hotel price of {hotel_price}"
               f"give it as object like this {daily_plan_object} so i can use it later in my react app - response only with the daily plan object."
               f"Make it valid so i can do JSON.parse on it.")
     print(prompt)
